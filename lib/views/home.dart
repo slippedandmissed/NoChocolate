@@ -1,15 +1,39 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:no_chocolate/router/router.dart';
+import 'package:no_chocolate/services/game_data.dart';
+import 'package:no_chocolate/services/game_state.dart';
 import 'package:no_chocolate/services/server/server.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 @RoutePage()
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(gameStateProvider.notifier).addListener((state) {
+      if (state != null && mounted) {
+        context.router.navigate(const GameRoute());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localStorage = LocalStorage("last-game");
+    final lastGameJson =
+        localStorage.getItem("last-game") as Map<String, dynamic>?;
     final server = ref.watch(serverProvider);
     return Scaffold(
       body: Center(
@@ -34,7 +58,17 @@ class HomePage extends ConsumerWidget {
               ],
               error: (error, _) => [Text(error.toString())],
               loading: () => [const CircularProgressIndicator()],
-            )
+            ),
+            if (lastGameJson != null) ...[
+              const Text("Or"),
+              ElevatedButton(
+                onPressed: () {
+                  final gameData = GameData.fromJson(lastGameJson);
+                  ref.read(gameStateProvider.notifier).setState(gameData);
+                },
+                child: const Text("Replay the Previous Game"),
+              ),
+            ]
           ],
         ),
       ),

@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:no_chocolate/services/game_data.dart';
+import 'package:no_chocolate/services/game_state.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -16,6 +18,10 @@ import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 
 class Server {
+  final GameStateNotifier gameStateNotifier;
+
+  Server({required this.gameStateNotifier});
+
   late final shelf_router.Router _router;
   late final FutureOr<Response> Function(Request) _staticHandler;
 
@@ -105,6 +111,9 @@ class Server {
     final bodyString = await request.readAsString();
     final bodyJson = json.decode(bodyString);
     final gameData = GameData.fromJson(bodyJson);
+    final localStorage = LocalStorage("last-game");
+    await localStorage.setItem("last-game", bodyJson);
+    gameStateNotifier.setState(gameData);
     return Response.ok("Ok");
   }
 
@@ -114,7 +123,8 @@ class Server {
 }
 
 final serverProvider = FutureProvider((ref) async {
-  final server = Server();
+  final gameStateNotifier = ref.watch(gameStateProvider.notifier);
+  final server = Server(gameStateNotifier: gameStateNotifier);
   await server.init();
   return server;
 });
