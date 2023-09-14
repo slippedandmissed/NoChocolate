@@ -16,9 +16,11 @@ abstract class _$AppRouter extends RootStackRouter {
   @override
   final Map<String, PageFactory> pagesMap = {
     GameRoute.name: (routeData) {
+      final args =
+          routeData.argsAs<GameRouteArgs>(orElse: () => const GameRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const GamePage(),
+        child: GamePage(key: args.key),
       );
     },
     HomeRoute.name: (routeData) {
@@ -32,16 +34,30 @@ abstract class _$AppRouter extends RootStackRouter {
 
 /// generated route for
 /// [GamePage]
-class GameRoute extends PageRouteInfo<void> {
-  const GameRoute({List<PageRouteInfo>? children})
-      : super(
+class GameRoute extends PageRouteInfo<GameRouteArgs> {
+  GameRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
           GameRoute.name,
+          args: GameRouteArgs(key: key),
           initialChildren: children,
         );
 
   static const String name = 'GameRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<GameRouteArgs> page = PageInfo<GameRouteArgs>(name);
+}
+
+class GameRouteArgs {
+  const GameRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'GameRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for

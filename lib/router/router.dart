@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 import 'package:no_chocolate/views/home.dart';
 import 'package:no_chocolate/views/game.dart';
 
