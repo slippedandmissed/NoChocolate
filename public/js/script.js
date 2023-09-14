@@ -3,7 +3,7 @@ window.transcript = [];
 
 async function generateCaptions(lang = "en") {
 
-  window.videoUrl = $("#youtube-link").val() || "https://www.youtube.com/watch?v=B3xZC3jn1_4";
+  window.videoUrl = $("#youtube-link").val() || "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
   const data = await (await fetch(`/proxy?url=${encodeURIComponent(window.videoUrl)}`)).text();
 
   if (!data.includes("captionTracks")) {
