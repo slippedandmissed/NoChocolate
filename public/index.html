@@ -3,9 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>NoChocolate</title>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
+      integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
   </head>
   <body>
-    Hello there!
+    <div id="column">
+      <input
+        type="text"
+        name="youtube-link"
+        id="youtube-link"
+        placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      />
+      <button id="generate-button" onclick="generateCaptions()">
+        Generate
+      </button>
+
+      <div id="assign-words">
+        <div id="players">
+          <div id="player-template" class="player">
+            <div class="player-bar">
+              <input type="text" placeholder="Player Name" />
+              <span class="player-total">0</span>
+            </div>
+            <div class="player-bin"></div>
+          </div>
+          <button onclick="addPlayer()">+ Add Player</button>
+        </div>
+        <div id="spacer"></div>
+        <div id="words">
+          <div id="word-template" class="word" data-tf-idf="0">
+            <span class="text"></span>
+            <span class="occurances"></span>
+          </div>
+        </div>
+      </div>
+      <button onclick="startGame()" id="start-game">Start Game!</button>
+    </div>
+    <script src="js/script.js"></script>
   </body>
 </html>

@@ -14,8 +14,15 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Server"),
+            const Text(
+              "Scan the QR Code Below to Start a Game!",
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 20),
             ...server.when(
               data: (server) => [
                 Text(server.getUrl()),

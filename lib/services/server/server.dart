@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:no_chocolate/services/game_data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -12,10 +13,11 @@ import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:shelf_static/shelf_static.dart' as shelf_static;
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path/path.dart' as p;
+import 'package:http/http.dart' as http;
 
 class Server {
   late final shelf_router.Router _router;
-  late final _staticHandler;
+  late final FutureOr<Response> Function(Request) _staticHandler;
 
   late final HttpServer _httpServer;
   late final String _ipAddress;
@@ -61,7 +63,10 @@ class Server {
     _staticHandler = shelf_static.createStaticHandler(
         p.join((await getApplicationDocumentsDirectory()).path, "public"),
         defaultDocument: 'index.html');
-    _router = shelf_router.Router()..get('/heart', _heartHandler);
+    _router = shelf_router.Router()
+      ..get('/heart', _heartHandler)
+      ..get("/proxy", _proxyHandler)
+      ..post("/start-game", _startGameHandler);
 
     final cascade = Cascade().add(_staticHandler).add(_router);
 
@@ -85,6 +90,22 @@ class Server {
 
   Response _heartHandler(Request request) {
     return Response.ok("beat");
+  }
+
+  Future<Response> _proxyHandler(Request request) async {
+    final url = request.requestedUri.queryParameters["url"];
+    if (url == null) {
+      return Response.badRequest();
+    }
+    final response = await http.get(Uri.parse(url));
+    return Response.ok(response.body);
+  }
+
+  Future<Response> _startGameHandler(Request request) async {
+    final bodyString = await request.readAsString();
+    final bodyJson = json.decode(bodyString);
+    final gameData = GameData.fromJson(bodyJson);
+    return Response.ok("Ok");
   }
 
   String getUrl() {
