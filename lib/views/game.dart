@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,8 +124,8 @@ class _GamePageState extends ConsumerState<GamePage> {
       focusNode: FocusNode(),
       autofocus: true,
       onKey: (RawKeyEvent e) {
-        if (e.runtimeType.toString() == 'RawKeyDownEvent') {
-          if (e.logicalKey.debugName == "Select") {
+        if (e.runtimeType.toString() == 'RawKeyUpEvent') {
+          if (e.logicalKey.keyLabel == "Select") {
             setState(() {
               if (_controller.value.isPlaying) {
                 _controller.pause();
@@ -144,6 +146,7 @@ class _GamePageState extends ConsumerState<GamePage> {
                   child: YoutubePlayer(
                     controller: _controller,
                     showVideoProgressIndicator: false,
+                    thumbnail: _controller.value.isReady ? Container() : null,
                   ),
                 ),
                 SizedBox(
@@ -176,7 +179,7 @@ class _GamePageState extends ConsumerState<GamePage> {
                                     word,
                                     style: TextStyle(
                                       color: playerName(word) == null
-                                          ? Colors.black
+                                          ? Colors.white
                                           : Colors.red,
                                     ),
                                   ),
@@ -196,6 +199,11 @@ class _GamePageState extends ConsumerState<GamePage> {
                               DrinkIndicator(
                                 player: entry.key,
                                 count: entry.value,
+                                randomSeed: entry.key.length +
+                                    entry.key.codeUnitAt(0) +
+                                    entry.key.codeUnitAt(entry.key.length - 1) *
+                                        entry.value +
+                                    (currentTranscript!.start * 1000).toInt(),
                               ),
                           ],
                         ),
@@ -215,10 +223,24 @@ class _GamePageState extends ConsumerState<GamePage> {
 class DrinkIndicator extends StatelessWidget {
   final String player;
   final int count;
-  const DrinkIndicator({super.key, required this.player, required this.count});
+  final int randomSeed;
+  const DrinkIndicator(
+      {super.key,
+      required this.player,
+      required this.count,
+      required this.randomSeed});
 
   @override
   Widget build(BuildContext context) {
+    final textOptionsForOneDrink = [
+      "$player, take a drink!",
+      "$player, drink up!",
+      "One drink to $player!"
+    ];
+    final text = count == 1
+        ? textOptionsForOneDrink[
+            Random(randomSeed).nextInt(textOptionsForOneDrink.length)]
+        : "$player, take $count drinks!";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Container(
@@ -231,7 +253,7 @@ class DrinkIndicator extends StatelessWidget {
             horizontal: 10,
             vertical: 5,
           ),
-          child: Text("$player, take $count drink${count == 1 ? '' : 's'}!"),
+          child: Text(text),
         ),
       ),
     );
@@ -251,7 +273,7 @@ class PlayerData extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.blue,
+            color: const Color.fromARGB(255, 0, 43, 78),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -283,7 +305,7 @@ class AssignedWord extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: const Color.fromARGB(255, 197, 255, 250),
+        color: const Color.fromARGB(255, 0, 44, 40),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),

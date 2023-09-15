@@ -25,7 +25,15 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'NoChocolate',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              background: Colors.black,
+            ),
+            textTheme: const TextTheme(
+              bodyMedium: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             useMaterial3: true,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),

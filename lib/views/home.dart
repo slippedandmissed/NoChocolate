@@ -38,6 +38,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Image.asset(
+              "assets/icon.png",
+              width: 150,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
             const Text(
               "Scan the QR Code Below to Start a Game!",
               style: TextStyle(
@@ -49,9 +56,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               data: (server) => [
                 Text(server.getUrl()),
                 QrImageView(
+                  backgroundColor: Colors.white,
                   data: server.getUrl(),
                   version: QrVersions.auto,
-                  size: 200.0,
+                  size: 150.0,
                 ),
               ],
               error: (error, _) => [Text(error.toString())],
